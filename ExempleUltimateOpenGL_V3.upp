@@ -1,0 +1,15 @@
+uses
+	Core,
+	ExempleUltimateOpenGL_V3,
+	ExempleUltimateOpenGL_V3,
+	UltimateOpenGL_V3;
+
+library
+	glfw3;
+
+file
+	ExempleUltimateOpenGL_V3.cpp;
+
+mainconfig
+	"" = "";
+
