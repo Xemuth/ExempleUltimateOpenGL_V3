@@ -58,12 +58,23 @@ CONSOLE_APP_MAIN
 
 	Object3D& modele =  myScene.CreateGameObject<Object3D>("modele");
 	modele.LoadModel("C:\\Upp\\myapps\\AssimpTest\\ressource\\nanosuit.obj");
-
+	
+	
+	Mesh m;
+    m.GetVertices().Add().Position = glm::vec3(-20.0f, 0.0f, -20.0f);
+    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f, -20.0f);
+    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f,  20.0f);
+    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f,  20.0f);
+    m.GetVertices().Add().Position = glm::vec3(-20.0f, 0.0f,  20.0f);
+    m.GetVertices().Add().Position = glm::vec3(-20.0f, -0.0f, -20.0f);
+    Object3D& test =  myScene.CreateGameObject<Object3D>("test",m);
+	
+/*
 	modele.SetOnDrawFunction([](GameObject& modele){
 		double yTransform = glm::cos(context.GetEllapsedTime());
 		modele.GetTransform().MoveFrom(glm::vec3(context.GetDeltaTime() * yTransform , 0.0f, 0.0f));
 		modele.GetTransform().RotateFromEulerAngles(context.GetDeltaTime() * 1,glm::vec3(1,1,1));
-	});
+	});*/
 
 	myScene.Load();
 	
