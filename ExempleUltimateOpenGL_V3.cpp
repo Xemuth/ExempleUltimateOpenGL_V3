@@ -17,6 +17,7 @@ String TransformFilePath(String FilePath);
 bool firstMouse=false;
 float lastX = screenWidth/2, lastY = screenHeight/2;
 
+int angle =0;
 
 UltimateOpenGL_Context context; //Context carrying all scene and object (Basicly context is a game)
 
@@ -52,39 +53,41 @@ CONSOLE_APP_MAIN
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);   // Anti alliasing 
     
+    
+    context.AddTexture("sand",TransformFilePath("/Textures/sand.jpg"));
+    
     Scene& myScene = context.AddScene("main");
     myScene.AddCamera("main");
     myScene.SetBackGroundColor(context.TransformRGBToFloatColor(40,180,200));
-
-	Object3D& modele =  myScene.CreateGameObject<Object3D>("modele");
-	modele.LoadModel("C:\\Upp\\myapps\\AssimpTest\\ressource\\nanosuit.obj");
-	
-	
-	Mesh m;
-    m.GetVertices().Add().Position = glm::vec3(-20.0f, 0.0f, -20.0f);
-    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f, -20.0f);
-    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f,  20.0f);
-    m.GetVertices().Add().Position = glm::vec3(20.0f, 0.0f,  20.0f);
-    m.GetVertices().Add().Position = glm::vec3(-20.0f, 0.0f,  20.0f);
-    m.GetVertices().Add().Position = glm::vec3(-20.0f, -0.0f, -20.0f);
+    
+    Mesh m; //Use to simulate the flat floot under the model
+    m.GetVertices().Add().SetPosition(glm::vec3(-20.0f, 0.0f, -20.0f)).SetTexCoords(glm::vec2(0.0f, 20.0f));
+    m.GetVertices().Add().SetPosition(glm::vec3(20.0f, 0.0f, -20.0f)).SetTexCoords(glm::vec2(20.0f, 20.0f));
+    m.GetVertices().Add().SetPosition(glm::vec3(20.0f, 0.0f,  20.0f)).SetTexCoords(glm::vec2(20.0f, 0.0f));
+    m.GetVertices().Add().SetPosition(glm::vec3(20.0f, 0.0f,  20.0f)).SetTexCoords(glm::vec2(20.0f, 0.0f));
+    m.GetVertices().Add().SetPosition(glm::vec3(-20.0f, 0.0f,  20.0f)).SetTexCoords(glm::vec2(0.0f, 0.0));
+    m.GetVertices().Add().SetPosition(glm::vec3(-20.0f, -0.0f, -20.0f)).SetTexCoords(glm::vec2(0.0f, 20.0f));
+    
     Object3D& test =  myScene.CreateGameObject<Object3D>("test",m);
+    test.BindTexture("sand");
+    
+	Object3D& modele =  myScene.CreateGameObject<Object3D>("modele");
+	modele.LoadModel("C:\\Upp\\myapps\\ExempleUltimateOpenGL_V3\\obj upp\\upp.obj");
+	modele.GetTransform().SetNewPosition(glm::vec3(0,4,0));
+	modele.GetTransform().ScaleNewValue(glm::vec3(0.05f,0.05f,0.05f));
 	
-/*
-	modele.SetOnDrawFunction([](GameObject& modele){
-		double yTransform = glm::cos(context.GetEllapsedTime());
-		modele.GetTransform().MoveFrom(glm::vec3(context.GetDeltaTime() * yTransform , 0.0f, 0.0f));
-		modele.GetTransform().RotateFromEulerAngles(context.GetDeltaTime() * 1,glm::vec3(1,1,1));
-	});*/
-
+	modele.SetOnDrawFunction([](GameObject& gm){
+		double rotation = glm::cos(context.GetEllapsedTime())/100;
+		gm.GetTransform().RotateFromEulerAngles(context.GetDeltaTime() * 2,glm::vec3(0,1,0) );
+	});
+	
 	myScene.Load();
-	
     while(!glfwWindowShouldClose(window)) {
-        
-        processInput(window); //analyses les touches appuyées
+        processInput(window);
         
 		glfwSetWindowTitle(window, "UltimateOpenGL V3 - " +AsString(context.GetFPS()) +" FPS");
 		try{
-			context.Draw(); //déssine la scene et les objets actuellement chargé
+			context.Draw(); 
 		}catch(UGLException& e){
 			LOG(e.what());	
 		}
@@ -128,6 +131,13 @@ void processInput(GLFWwindow *window)
 	}catch(const UGLException& exception){
 		LOG("Exception occured in processInput !\n" + String(exception.what()));
 	}
+	
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS){
+        angle ++;
+       static_cast<Object3D&>(context.GetActiveScene().GetGameObject<GameObject>("modele")).GetTransform().SetNewRotationEulerAngles(glm::radians( (float)angle),glm::vec3(1.0f,0,0));
+       Cout() << angle <<EOL;
+    }
+	
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -160,6 +170,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
        Cout() << "Delta Time:" << AsString( context.GetDeltaTime()) << "   Time Ellapsed :" << AsString(context.GetEllapsedTime()) << EOL;
     }
+    
 }
 
 // glfw: whenever the mouse moves, this callback is called
