@@ -31,7 +31,7 @@ CONSOLE_APP_MAIN
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4); // Anti alliasing 
     context.SetScreenSize(screenHeight,screenWidth);
-    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight,"Hello UltimateOpenGL V2", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight,"UltimateOpenGL V3", NULL, NULL);
     
     if (window == nullptr)
     {
@@ -55,6 +55,7 @@ CONSOLE_APP_MAIN
     
     
     context.AddTexture("sand",TransformFilePath("/Textures/sand.jpg"));
+    context.AddTexture("case",TransformFilePath("/Textures/container.jpg"));
     
     Scene& myScene = context.AddScene("main");
     myScene.AddCamera("main");
@@ -70,6 +71,9 @@ CONSOLE_APP_MAIN
     
     Object3D& test =  myScene.CreateGameObject<Object3D>("test",m);
     test.BindTexture("sand");
+    test.BindTexture("case");
+    
+    
     
 	Object3D& modele =  myScene.CreateGameObject<Object3D>("modele");
 	modele.LoadModel("C:\\Upp\\myapps\\ExempleUltimateOpenGL_V3\\obj upp\\upp.obj");
